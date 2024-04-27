@@ -19,8 +19,10 @@ public class OrbitalMechanics {
 
         do{
             delta = (E - e * Math.sin(E) - M) / (1 - e * Math.cos(E));
-            System.out.println("Current E: " + E);
+            E = E - delta;
             i++;
+            if(Math.abs(delta) < TOLERANCE){System.out.println("FOUND");}
+            else{System.out.println("REVISION " + i);}
         }while(Math.abs(delta) > TOLERANCE && i < MAX_ITERATIONS);
 
         return E;
@@ -32,11 +34,4 @@ public class OrbitalMechanics {
         return trueAnomaly;
     }
 
-    public static void main(String[] args){
-        double meanAnomaly = Math.toRadians(67);
-        double eccentricity = 0.0167; //earth's eccentricity
-
-        double nu = trueAnomaly(meanAnomaly, eccentricity);
-        System.out.println("True Anomaly: " + Math.toDegrees(nu) + " degrees");
-    }
 }
