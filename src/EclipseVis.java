@@ -11,8 +11,22 @@ import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
+/**
+ * TODO
+ * <p>Sun's Position: In a more realistic model, the Sun should be at one of the focal points of the ellipse, not at the geometric center. If the Sun appears to be at the center in your simulation, you might need to adjust the position based on the focal distance.</p>
+ * <p>Scale: The size of the Earth and the Sun relative to the size of the orbit should be to scale, or at least proportionally representative if you're not using a true-to-size scale. This helps with visual understanding.</p>
+ * <p>Earth's Rotation: If you're showing Earth's rotation, there might be an arrow or some indicator of its orientation. If it's not there yet, it's something you might add later.</p>
+ * <p>Animation: The movement of the Earth should be faster near the perihelion (closest to the Sun) and slower near the aphelion (farthest from the Sun) due to Kepler's second law, which states that a line segment joining a planet and the Sun sweeps out equal areas during equal intervals of time.</p>
+ */
+
 public class EclipseVis extends Application {
     private double elapsedTime = 0.0;
+    private static final double ORBITAL_PERIOD = 100.0; //arbitrary num for sim speed
+    private static final double ECCENTRICITY = 0.0167; // Earth's Eccentricity
+
+
+
+
 
     @Override
     public void start(Stage primaryStage) {
@@ -34,9 +48,9 @@ public class EclipseVis extends Application {
         Timeline timeline = new Timeline(new KeyFrame(Duration.millis(10), event -> {
             //update angles and push every 10 millis, full orbit every 100 seconds
             elapsedTime += .04 * speedSlider.getValue();
-            double angle = (elapsedTime/100) *2 *Math.PI;
-            double earthAngle = angle*365.242374; //this many rotations per "year"
-            drawOrbits(gc, angle, earthAngle);
+            double meanAnomaly = (2 * Math.PI * elapsedTime / ORBITAL_PERIOD) % (2 * Math.PI);
+            double trueAnomaly = OrbitalMechanics.trueAnomaly(meanAnomaly, ECCENTRICITY);
+            drawOrbits(gc, trueAnomaly);
 
         }));
         timeline.setCycleCount(Timeline.INDEFINITE);
@@ -58,52 +72,45 @@ public class EclipseVis extends Application {
     }
 
 
-    private void drawOrbits(GraphicsContext gc, double angle, double earthAngle){
+    private void drawOrbits(GraphicsContext gc, double trueAnomaly){
         //setting background black
         gc.setFill(Color.DARKSLATEGRAY);
         gc.fillRect(0,0,gc.getCanvas().getHeight(), gc.getCanvas().getWidth());
 
 
         //constants
-        double earthRadius = 5;
-        double orbitRadius = 150;
-
-        double semiMajorAxis = 150;
-        double eccentricity = 0.0167; //earths orbital eccentricity
-        double focalDistance = semiMajorAxis * eccentricity;
-        double semiMinorAxis = Math.sqrt(Math.pow(semiMajorAxis,2) - Math.pow(focalDistance,2));
-
         double centerX = 300, centerY = 300;
-        double sunX = centerX + focalDistance; //center of ellipse is at (centerX, centerY)
-        double sunY = centerY;
+        double sunX = centerX, sunY = centerY;
         double sunRadius = 20;
-
-        //Earth pos
-
-        double earthX = sunX +semiMajorAxis * Math.cos(angle) - earthRadius;
-        double earthY = centerY +semiMinorAxis * Math.sin(angle) - earthRadius;
-
-        //earth point line
-
-        gc.setStroke(Color.WHITE);
-        gc.setLineWidth(2);
-        double lineLength = 20;
-        gc.strokeLine(earthX+earthRadius,
-                earthY+earthRadius,
-                earthX +earthRadius +lineLength *Math.cos(earthAngle),
-                earthY +earthRadius +lineLength *Math.sin(earthAngle));
+        double orbitRadius = 150;
 
         //draw orbit path
         gc.setStroke(Color.NAVAJOWHITE);
-        gc.strokeOval(centerX - semiMajorAxis, centerY - semiMinorAxis, semiMajorAxis *2, semiMinorAxis *2);
+        gc.strokeOval(centerX - orbitRadius, centerY - orbitRadius * .8, orbitRadius *2, orbitRadius *1.6);
 
         //drawing sun at the center
         gc.setFill(Color.PAPAYAWHIP);
         gc.fillOval(sunX - sunRadius, sunY - sunRadius, sunRadius *2, sunRadius *2);
 
-        //drawing earth
+        //Earth pos
+        double earthRadius = 5;
+        double earthX = centerX + orbitRadius * Math.cos(trueAnomaly) - earthRadius;
+        double earthY = centerY + orbitRadius * 0.8 * Math.sin(trueAnomaly) - earthRadius;
+
+        //Draw Earth at pos
         gc.setFill(Color.LIGHTSTEELBLUE);
-        gc.fillOval(earthX, earthY, earthRadius *2, earthRadius *2);
+        gc.fillOval(earthX,earthY,earthRadius *2, earthRadius *2);
+
+
+//        //earth point line
+//        gc.setStroke(Color.WHITE);
+//        gc.setLineWidth(2);
+//        double lineLength = 20;
+//        gc.strokeLine(earthX+earthRadius,
+//                earthY+earthRadius,
+//                earthX +earthRadius +lineLength *Math.cos(earthAngle),
+//                earthY +earthRadius +lineLength *Math.sin(earthAngle));
+
 
     }
 
