@@ -13,10 +13,8 @@ import javafx.util.Duration;
 
 /**
  * TODO
- * <p>Sun's Position: In a more realistic model, the Sun should be at one of the focal points of the ellipse, not at the geometric center. If the Sun appears to be at the center in your simulation, you might need to adjust the position based on the focal distance.</p>
  * <p>Scale: The size of the Earth and the Sun relative to the size of the orbit should be to scale, or at least proportionally representative if you're not using a true-to-size scale. This helps with visual understanding.</p>
  * <p>Earth's Rotation: If you're showing Earth's rotation, there might be an arrow or some indicator of its orientation. If it's not there yet, it's something you might add later.</p>
- * <p>Animation: The movement of the Earth should be faster near the perihelion (closest to the Sun) and slower near the aphelion (farthest from the Sun) due to Kepler's second law, which states that a line segment joining a planet and the Sun sweeps out equal areas during equal intervals of time.</p>
  */
 
 public class EclipseVis extends Application {
