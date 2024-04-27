@@ -8,7 +8,8 @@ public class OrbitalMechanics {
      * @param M <p>mean anomaly is a linear measure of time since the last perihelion, related directly to the orbiting body's motion if its orbit were circular. It increases uniformly from 0 to
      * 2π radians over one orbital period (T)</p>
      * @param e <p>e is the eccentricity of the orbit.</p>
-     * @return
+     * @return E <p>eccentric anomaly relates the position of a body moving along a circular orbit to the position
+     * of a body moving along an elliptical orbit that has the same mean anomaly. It’s calculated from the mean anomaly using Kepler’s Equation</p>
      */
     public static double solveKeplersEquation(double M, double e){
         double E = M; //take an initial guess
